@@ -1,0 +1,188 @@
+**COMANDOS KAFKA**
+#Listar roles
+kafka-sentry -lr
+
+#Verificar qual a role associada ao grupo
+kafka-sentry -lr -g br_cloudera_chronos_hm
+
+
+#Listar quais topicos associados a essa role
+kafka-sentry -lp -r rl_cloudera_chronos_prd | grep replication.db2.db2bc.z00.bc_cheque
+ 
+
+#Criar role
+kafka-sentry -cr -r my_role
+
+ 
+
+#Atribuir grupo a role
+kafka-sentry -arg -r nome-da-role -g nome-do-grupo
+
+ 
+
+#Atribuir permissão a role
+kafka-sentry -gpr -r nome-da-role -p "HOST=*->Topic=nome-do-topico->action=read"
+kafka-sentry -gpr -r nome-da-role -p "HOST=*->Topic=nome-do-topico->action=write"
+kafka-sentry -gpr -r nome-da-role -p "HOST=*->Topic=nome-do-topico->action=describe"
+
+#Atribuir permissão ao consumer group
+kafka-sentry -gpr -r br_cloudera_hom_positivo_developer -p "Host=*->Consumergroup=db2consumer->action=read"
+kafka-sentry -gpr -r br_cloudera_hom_positivo_developer -p "Host=*->Consumergroup=db2consumer->action=write"
+kafka-sentry -gpr -r br_cloudera_hom_positivo_developer -p "Host=*->Consumergroup=db2consumer->action=describe"
+
+###LIBERANDO PERMISSÃO PARA A ROLE PODER UTILIZAR QUALQUER GRUPO DE CONSUMO A PARTIR DE QUALQUER HOST PARA LER TÓPICOS:
+kafka-sentry -gpr -r rl_cloudera_share_dev -p "Host=*->Consumergroup=*->action=all"
+kafka-sentry -gpr -r rl_cloudera_hom_arqdados -p "Host=*->Consumergroup=*->action=describe" 
+ 
+
+#Criar Tópicos
+kafka-topics --create --zookeeper hostname:2181/kafka --replication-factor 2 --partitions 4 --topic topicname 
+
+ 
+
+# Permissão topico homologação chronos
+kafka-sentry -gpr -r rl_cloudera_chronos_hm -p "HOST=*->Topic=replication.db2.db2sc.z00.sc_distrib_risco-json->action=all"
+
+ 
+######### -----> Listar Tópicos Kafka <------##########
+
+
+###PROD###
+kafka-topics --zookeeper spbrhdpcorp03:2181 --list | grep replication.db2.db2rf.z00.rf_pessoa_fisica-json 
+
+
+###hml###
+kafka-topics --zookeeper spbrhdphm03:2181 --list
+
+ 
+
+###dev###
+kafka-topics --zookeeper spbrhdpdev1:2181 --list
+
+ 
+
+kafka-acls --authorizer-properties --zookeeper spbrhdpdev1:2181 --list --topic positivo.sync_dispute_status
+
+ 
+
+ 
+
+######### -----> Listar Consumer Group Kafka <------##########
+#hml
+kafka-consumer-groups --zookeeper spbrhdphm03:2181 --list
+kafka-consumer-groups --bootstrap-server spbrhdphm03:9093 -list
+kafka-consumer-groups --zookeeper spbrhdphm03:2181 --describe --group db2consumer
+
+ 
+
+
+#dev
+kafka-consumer-groups --zookeeper spbrhdpdev2:2181 -list
+kafka-consumer-groups --bootstrap-server spbrhdpdev2:9093 -list
+kafka-consumer-groups --zookeeper spbrhdpdev2:2181 --describe --group db2consumer
+
+ 
+
+
+#Criar Tópicos
+kafka-topics --create --zookeeper hostname:2181/kafka --replication-factor 2 --partitions 4 --topic topicname 
+
+ 
+
+#Read data from a Kafka topic and write it to standard output. 
+kafka-console-consumer --zookeeper zk01.example.com:2181 --topic t1
+
+ 
+
+
+#Read data from standard output and write it to a Kafka topic. For example:
+/usr/bin/kafka-console-producer --broker-list kafka02.example.com:9092,kafka03.example.com:9092 --topic t1
+
+ 
+
+
+kafka-topics --zookeeper spbrhdpcorp01:2181 --describe --topic streaming_magellan_receita_federal_scpf
+kafka-topics.sh --zookeeper spbrhdpcorp01:2181 --describe --topics-with-overrides
+
+ 
+
+kafka-topics --zookeeper spbrhdpcorp01:2181 --alter --topic receita_federal_scpf --config retention.ms=1000
+
+ 
+
+kafka-topics --delete --zookeeper spbrhdpcorp01:2181 --topic streaming_magellan_receita_federal_scpf
+kafka-topics --create --zookeeper spbrhdpcorp01:2181  --topic streaming_magellan_receita_federal_scpf --replication-factor 3 --partitions 3
+kafka-topics --zookeeper spbrhdpcorp01:2181 --list
+
+ 
+
+
+kafka-console-consumer --bootstrap-server spbrhdpcorp04.br.experian.local:9093,spbrhdpcorp05.br.experian.local:9093,spbrhdpcorp06.br.experian.local:9093,spbrhdpcorp07.br.experian.local:9093,spbrhdpcorp08.br.experian.local:9093,spbrhdpcorp09.br.experian.local:9093 --topic streaming_magellan_receita_federal_scpf --from-beginning 
+tlvz precise do --consumer.config consumer.properties
+kafka-console-consumer --bootstrap-server "spbrhdpdev2:9093,spbrhdpdev3:9093,spbrhdpdev4:9093" --topic teste_orch  --consumer.config client.properties --from-beginning 
+
+ 
+
+kinit -kt sist_servdevkafka_co.keytab sist_servdevkafka_co  
+kafka-topics --zookeeper "spbrhdpdev1:2181" --list
+kafka-topics --create --zookeeper "spbrhdpdev1:2181" --replication-factor 1 --partitions 1 --topic teste_orch
+
+ 
+
+kafka-console-producer --broker-list "spbrhdpdev2:9093,spbrhdpdev3:9093,spbrhdpdev4:9093" --topic teste_orch  --producer.config client.properties
+
+ 
+
+kafka-console-consumer --bootstrap-server "spbrhdpdev2:9093,spbrhdpdev3:9093,spbrhdpdev4:9093" --topic teste_orch  --consumer.config client.properties --from-beginning 
+
+ 
+
+
+###DELETANDO TÓPICO
+kafka-topics --zookeeper spbrhdphm03:2181 --delete --topic marcelo
+
+ 
+
+##DELETANDO TÓPICO MARCADO PARA DELEÇÃO PRD
+/opt/cloudera/parcels/CDH-5.14.4-1.cdh5.14.4.p0.3/lib/zookeeper/bin/zkCli.sh -server spbrhdphm01.br.experian.local:2181
+rmr /admin/deleted_topics/chronos.view
+rmr /brokers/topics/chronos.view
+rmr /config/topics/chronos.view
+
+ 
+
+##DELETANDO TÓPICO MARCADO PARA DELEÇÃO HML
+/opt/cloudera/parcels/CDH-5.14.4-1.cdh5.14.4.p0.3/lib/zookeeper/bin/zkCli.sh -server spbrhdphm03:2181
+rmr /admin/deleted_topics/chronos.teste.performance
+rmr /brokers/topics/chronos.teste.performance
+rmr /config/topics/chronos.teste.performance
+
+ 
+
+#CRIAR TOPICO
+kafka-topics --create --zookeeper spbrhdphm03:2181 --replication-factor 3 --partitions 3 --topic chronos_teste.performance
+
+ 
+
+#teste gravar tópico
+echo '{"view": "VW_XXX33", "ndoc": "7777"}' | kafka-console-producer \
+--broker-list spbrhdphm03.br.experian.local:9093,spbrhdphm04.br.experian.local:9093,spbrhdphm05.br.experian.local:9093 \
+--topic chronos.teste.performance \
+--producer.config client.properties 
+
+ 
+
+
+kafka-sentry -gpr -r rl_cloudera_chronos_hm -p "HOST=*->Topic=positivo.sync_dispute->action=all"
+
+ 
+
+
+https://www.cloudera.com/documentation/kafka/latest/topics/kafka_security.html
+https://www.cloudera.com/documentation/kafka/2-0-x/topics/kafka_command_line.html
+https://cwiki.apache.org/confluence/display/SENTRY/Apache+Kafka+Authorization+with+Apache+Sentry
+
+ 
+
+#mudar replicas
+https://stackoverflow.com/questions/37960767/how-to-change-the-number-of-replicas-of-a-kafka-topic/43518389#43518389
