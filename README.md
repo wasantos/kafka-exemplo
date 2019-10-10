@@ -52,5 +52,12 @@ export KAFKA_OPTS="-Djava.security.auth.login.config=/PATH/jaas.conf"
 
 
 
-
 ## 5 - Criando Kafka-Consumer
+- Exemplo:
+``` sh
+[root@hostname]# kafka-console-consumer --bootstrap-server hostname_of_kafka_broker:9093 --topic name_of_topic --consumer.config consumer.properties
+[root@hostname]#
+> _
+```
+#Obs: Antes de criar o producer e o consumer, crie os arquivos de configuração: jaas.conf, producer.properties, consumer.properties;
+#Pré-requisitos: O tópico precisa existir, ter as permissões de Tópico:ALL e Consumergroup: READ e DESCRIBE.
