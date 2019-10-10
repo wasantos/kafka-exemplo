@@ -1,0 +1,9 @@
+security.protocol=SASL_SSL
+sasl.mechanism=GSSAPI
+sasl.kerberos.service.name=kafka
+sasl.jaas.config=com.sun.security.auth.module.Krb5LoginModule required \
+        useKeyTab=true \
+        storeKey=true  \
+        keyTab="/PATH/user_name.keytab" \
+                serviceName="kafka" \
+        principal="user_name_principal@DOMAIN";
