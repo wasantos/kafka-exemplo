@@ -1,0 +1,56 @@
+## Comandos kafka-sentry
+
+##Dev
+Criando Role
+kafka-sentry -cr -r rl_cloudera_dev_magellan_developer
+
+# Atribuir grupo a role
+kafka-sentry -arg -r rl_cloudera_dev_magellan_developer -g br_cloudera_dev_magellan_developer
+
+##Verificação
+#listar roles
+kafka-sentry -lr | grep rl_cloudera_dev_magellan_developer
+
+rl_cloudera_prd_magellan_developer
+
+br_cloudera_prd_magellan_developer
+
+##Verificar qual a role associada ao grupo
+kafka-sentry -lr -g br_cloudera_dev_magellan_developer
+
+PROD:
+role:  rl_cloudera_prd_magellan_developer
+Group: br_cloudera_prd_magellan_developer
+
+kafka-sentry -lr -g br_cloudera_prd_magellan_developer
+kafka-sentry -lr -g br_cloudera_dev_magellan_developer
+
+##Criar Dev Tópicos
+streaming_magellan_abr_atual
+
+##Dar Permissões Nos Tópicos
+#atribuir permissão a role
+kafka-sentry -gpr -r rl_cloudera_dev_magellan_developer -p "HOST=*->Topic=nome-do-topico->action=all"
+
+# Dar Permissões Consummer Group a Role
+kafka-sentry -gpr -r rl_cloudera_dev_magellan_developer -p "Host=*->Consumergroup=*->action=READ"
+kafka-sentry -gpr -r rl_cloudera_prd_magellan_developer -p "Host=*->Consumergroup=*->action=DESCRIBE"
+
+# Removendo permissão Consumergroup
+kafka-sentry -rpr -r rl_cloudera_prd_magellan_developer -p "Host=*->Consumergroup=*->action=ALL"
+
+rl_cloudera_prd_magellan_developer
+
+##listar quais topicos associados a essa role:
+#Dev
+kafka-sentry -lp -r rl_cloudera_dev_magellan_developer*
+
+#PROD
+kafka-sentry -lp -r rl_cloudera_prd_magellan_developer*
+==============================================================================================================
+User:  usuário sist_magdev
+
+#criar role
+Group: br_cloudera_dev_magellan_developer
+Topic: streaming_magellan_abr_atual
+Environment: Dev:
