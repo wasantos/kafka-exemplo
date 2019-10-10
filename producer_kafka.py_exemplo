@@ -1,0 +1,66 @@
+import json
+import sys
+
+from confluent_kafka.admin import AdminClient
+from confluent_kafka import Producer
+
+
+class KafkaProducer(object):
+
+    def __init__(self):
+        print('Entrou no construtor')
+        # self._kafka_topic = 'teste'
+        self._kafka_topic = 'streaming_magellan_log'
+        # self._kafka_topic = 'replication.db2.db2rv.z00.rv_autoriz_posit-json'
+        self.kafka_conf = {'bootstrap.servers': "spbrhdpdev2.br.experian.local:9093,spbrhdpdev3.br.experian.local:9093,spbrhdpdev4.br.experian.local:9093",
+            'sasl.kerberos.principal': 'sist_magdev_consumer@BR.EXPERIAN.LOCAL',
+            'sasl.kerberos.keytab': 'sist_magdev_consumer.keytab',
+            'sasl.kerberos.service.name': 'kafka',
+            'security.protocol': 'SASL_SSL',
+            'sasl.mechanisms': 'GSSAPI'
+        }
+        # self.kafka_conf = {'bootstrap.servers': "localhost:9092"}
+        self.kafka_client = AdminClient(self.kafka_conf)
+        self.producer = Producer(self.kafka_conf)
+        print('Terminou construtor')
+
+
+    def _prepare_message(self, message: str):
+        if type(message) is not str:
+            message = json.dumps(message, ensure_ascii=False)
+        print('Preparou a mensagem: ' + message)
+        return str.encode(message)
+
+    def send_message(self, message: str):
+        print('Mensagem passada: ' + message)
+        message = self._prepare_message(message=message)
+        success = False
+        # self.producer.produce(topic=self._kafka_topic, value=message, callback=self.delivery_callback)
+        # self.producer.poll(0)
+        # print ('enviou')
+        # exit(0)
+        while not success:
+            try:
+                self.producer.produce(topic=self._kafka_topic, value=message, callback=self.delivery_callback)
+                self.producer.poll(0)
+                print ('Entrou no while')
+                success = True
+            except BufferError:
+                print('Producer queue is full ({} messages awaiting delivery): try again'.format(len(self.producer)))
+                self.producer.poll(0)
+
+        self.producer.flush()
+        print('Terminou o While')
+
+    def delivery_callback(self, err, msg):
+        if err:
+            print('Message failed delivery: {}'.format(err))
+        else:
+            print('Message successfully sent to kafka')
+
+
+if __name__ == '__main__':
+    #msg = sys.argv[1]
+    msg = "Maestro|teste"
+    KafkaProducer().send_message(msg)
+    print('Terminou o python')
