@@ -1,4 +1,4 @@
-# Criando Kafka Producer e Kafka Consumer com SSL e Kerberos
+# Criando Kafka-Producer e Kafka-Consumer com SSL e Kerberos
 
 # Antes de Começar:
 
@@ -34,7 +34,6 @@ Valid starting       Expires              Service principal
         renew until 10/11/2019 16:45:38
 [root@hostname]#
 ```
-
 ## 3 - Fazer o export da variável KAFKA_OPTS
 
 export KAFKA_OPTS="-Djava.security.auth.login.config=/PATH/jaas.conf"
@@ -50,6 +49,7 @@ export KAFKA_OPTS="-Djava.security.auth.login.config=/PATH/jaas.conf"
 ```
 
 ## 4 - Criando Kafka-Producer
+
 
 
 
