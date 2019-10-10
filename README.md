@@ -50,8 +50,15 @@ export KAFKA_OPTS="-Djava.security.auth.login.config=/PATH/jaas.conf"
 
 ## 4 - Criando Kafka-Producer
 
+- Producer: kafka-console-producer --broker-list hostname_of_kafka_broker01:9093,hostname_of_kafka_broker02:9093,hostname_of_kafka_broker03:9093 --topic name_of_topic --producer.config producer.properties
 
+- Exemplo:
+``` sh
+[root@hostname]# kafka-console-producer --broker-list hostname_of_kafka_broker01:9093,hostname_of_kafka_broker02:9093,hostname_of_kafka_broker03:9093 --topic name_of_topic --producer.config producer.properties
+[root@hostname]#
+>_
 
+```
 ## 5 - Criando Kafka-Consumer
 - Exemplo:
 ``` sh
