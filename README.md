@@ -16,8 +16,8 @@
 export KAFKA_OPTS="-Djava.security.auth.login.config=/PATH/jaas.conf"
 
 
-## 1 - Criando Kafka-Producer
+## 4 - Criando Kafka-Producer
 
 
 
-## 2 - Criando Kafka-Consumer
+## 5 - Criando Kafka-Consumer
